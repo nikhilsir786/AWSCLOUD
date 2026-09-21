@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AWS Developer Associate practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    color-scheme: light;
+    --font: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --paper: #ECEFF7;
+    --sheet: #FBFCFF;
+    --ink: #172036;
+    --ink-2: #465274;
+    --rule: #C6CDE2;
+    --form: #3040B8;
+    --on-form: #FFFFFF;
+    --pencil: #252A3D;
+    --sel-bg: #E4E8F8;
+    --focus: #3040B8;
+    --ok: #137544;
+    --ok-bg: #E2F4EA;
+    --bad: #B02A22;
+    --bad-bg: #FBE7E5;
+    --miss: #8A5700;
+    --miss-bg: #FBF0D6;
+    --on-solid: #FFFFFF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #0E1220;
+      --sheet: #171C2E;
+      --ink: #E6EAF8;
+      --ink-2: #A2ACD0;
+      --rule: #2E3658;
+      --form: #9AA8FF;
+      --on-form: #0E1220;
+      --pencil: #E6EAF8;
+      --sel-bg: #1F2745;
+      --focus: #B4BEFF;
+      --ok: #5FD497;
+      --ok-bg: #12301F;
+      --bad: #FF938A;
+      --bad-bg: #3B1C1B;
+      --miss: #F0BE5E;
+      --miss-bg: #33290F;
+      --on-solid: #0E1220;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0E1220;
+    --sheet: #171C2E;
+    --ink: #E6EAF8;
+    --ink-2: #A2ACD0;
+    --rule: #2E3658;
+    --form: #9AA8FF;
+    --on-form: #0E1220;
+    --pencil: #E6EAF8;
+    --sel-bg: #1F2745;
+    --focus: #B4BEFF;
+    --ok: #5FD497;
+    --ok-bg: #12301F;
+    --bad: #FF938A;
+    --bad-bg: #3B1C1B;
+    --miss: #F0BE5E;
+    --miss-bg: #33290F;
+    --on-solid: #0E1220;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: inherit; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 1rem/1.5 var(--font);
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: .5rem 0 1.5rem; }
+  h1 { font-size: 1.625rem; line-height: 1.2; letter-spacing: -.02em; margin: 0; font-weight: 700; }
+  .sub { margin: .35rem 0 0; color: var(--ink-2); max-width: 46ch; }
+  .small { font-size: .9375rem; color: var(--ink-2); margin: 0; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .88em; background: var(--sel-bg); padding: .05em .3em; border-radius: .25rem; overflow-wrap: anywhere;
+  }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 18rem; gap: 2rem; align-items: start; }
+  main { min-width: 0; }
+
+  /* Buttons */
+  .btn {
+    font: inherit; font-weight: 500; min-height: 2.75rem; padding: .55rem 1.1rem; border-radius: .5rem;
+    border: 1.5px solid var(--rule); background: transparent; color: var(--ink); cursor: pointer;
+  }
+  .btn:hover { border-color: var(--form); }
+  .btn.primary { background: var(--form); border-color: var(--form); color: var(--on-form); }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.quiet { border-color: transparent; color: var(--ink-2); }
+  .btn.quiet:hover { border-color: var(--rule); }
+  .btn[aria-pressed="true"] { border-color: var(--miss); color: var(--miss); background: var(--miss-bg); }
+  .btn:focus-visible, .row:focus-visible, .chip:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .mobile-only { display: none; }
+
+  /* Question card */
+  .qcard, .summary {
+    background: var(--sheet); border: 1px solid var(--rule); border-radius: .625rem; padding: 1.5rem;
+  }
+  .qhead { display: flex; justify-content: space-between; gap: .5rem 1rem; flex-wrap: wrap; color: var(--ink-2); font-size: .9375rem; margin-bottom: .75rem; }
+  .qhead strong { color: var(--ink); font-weight: 700; }
+  .qtext { font-size: 1.1875rem; line-height: 1.55; font-weight: 500; margin: 0 0 1.25rem; max-width: 64ch; outline: none; }
+  .note {
+    background: var(--miss-bg); border-left: 3px solid var(--miss); border-radius: .25rem;
+    padding: .65rem .85rem; font-size: .9375rem; margin: 0 0 1.25rem; max-width: 64ch;
+  }
+
+  .opt {
+    position: relative; display: grid; grid-template-columns: 2rem 1fr; gap: .85rem; align-items: start;
+    padding: .8rem .9rem; border: 1.5px solid var(--rule); border-radius: .5rem; cursor: pointer; background: var(--sheet);
+  }
+  .opt + .opt { margin-top: .6rem; }
+  .opt:hover { border-color: var(--form); }
+  .opt.picked { border-color: var(--pencil); background: var(--sel-bg); }
+  .opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .bubble {
+    width: 2rem; height: 2rem; border-radius: 50%; border: 1.5px solid var(--form); color: var(--form);
+    display: grid; place-items: center; font-weight: 700; font-size: .875rem; transition: background .12s, color .12s;
+  }
+  .multi .bubble { border-radius: .4rem; }
+  .opt.picked .bubble { background: var(--pencil); border-color: var(--pencil); color: var(--paper); }
+  .opt input:focus-visible + .bubble { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .otext { padding-top: .2rem; line-height: 1.45; overflow-wrap: break-word; min-width: 0; }
+  .hint { min-height: 1.5rem; margin: .75rem 0 0; font-size: .9375rem; color: var(--ink-2); }
+  .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-top: 1rem; }
+  .spacer { flex: 1; }
+
+  /* Answer sheet */
+  .sheet {
+    position: sticky; top: calc(1rem + env(safe-area-inset-top, 0px));
+    display: flex; flex-direction: column;
+    max-height: calc(100vh - 2rem - env(safe-area-inset-top, 0px));
+    background: var(--sheet); border: 1.5px solid var(--form); border-radius: .5rem; padding: 1rem .75rem 1rem 1rem;
+  }
+  .sheet-head h2 { font-size: 1.0625rem; margin: 0; }
+  .sheet-head { margin-bottom: .6rem; }
+  .cols, .row { display: grid; grid-template-columns: 1.6rem 1.1rem 1fr; align-items: center; }
+  .cols { color: var(--ink-2); font-size: .75rem; padding: 0 .25rem; }
+  .cols .bub, .row .bub { display: flex; gap: .45rem; }
+  .cols .bub span { width: 1rem; text-align: center; }
+  .rows { flex: 1; min-height: 0; overflow-y: auto; padding-right: .25rem; }
+  .row {
+    width: 100%; padding: .2rem .25rem; margin: 0; border: 0; border-radius: .25rem; background: none;
+    font: inherit; color: inherit; text-align: left; cursor: pointer;
+  }
+  .row:hover { background: var(--sel-bg); }
+  .row[aria-current="step"] { background: var(--sel-bg); box-shadow: inset 3px 0 0 var(--form); }
+  .num { font-size: .8125rem; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .mk { font-size: .8125rem; font-weight: 700; color: var(--miss); }
+  .row.ok .mk { color: var(--ok); }
+  .row.bad .mk { color: var(--bad); }
+  .row.none .mk { color: var(--miss); }
+  .b { display: block; width: 1rem; height: 1rem; border-radius: 50%; border: 1.25px solid var(--form); }
+  .b.on { background: var(--pencil); border-color: var(--pencil); }
+  .b.gap { visibility: hidden; }
+  .b.right { background: var(--ok); border-color: var(--ok); }
+  .b.wrong { background: var(--bad); border-color: var(--bad); }
+  .sheet-foot { margin-top: .75rem; display: grid; gap: .6rem; }
+
+  /* Results */
+  .summary h2 { font-size: 1.75rem; line-height: 1.2; letter-spacing: -.02em; margin: 0 0 .4rem; outline: none; }
+  .summary .lead { margin: 0 0 .4rem; font-size: 1.0625rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0 .25rem; }
+  .chip {
+    font: inherit; font-weight: 500; padding: .45rem .9rem; min-height: 2.5rem; border-radius: 99px;
+    border: 1.5px solid var(--rule); background: transparent; color: var(--ink); cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--pencil); border-color: var(--pencil); color: var(--paper); }
+  .rev {
+    margin-top: 1rem; background: var(--sheet); border: 1px solid var(--rule); border-left-width: 5px;
+    border-radius: .625rem; padding: 1.25rem 1.5rem; scroll-margin-top: 1rem;
+  }
+  .rev.ok { border-left-color: var(--ok); }
+  .rev.bad { border-left-color: var(--bad); }
+  .rev.none { border-left-color: var(--miss); }
+  .rhead { display: flex; flex-wrap: wrap; gap: .25rem 1rem; align-items: baseline; margin-bottom: .6rem; }
+  .rhead h3 { margin: 0; font-size: 1rem; }
+  .status { font-weight: 700; }
+  .status.ok { color: var(--ok); }
+  .status.bad { color: var(--bad); }
+  .status.none { color: var(--miss); }
+  .ropts { list-style: none; padding: 0; margin: 0 0 1.1rem; }
+  .ropt {
+    display: grid; grid-template-columns: 2rem 1fr; gap: .85rem; padding: .7rem .9rem;
+    border: 1.5px solid var(--rule); border-radius: .5rem; margin-top: .5rem;
+  }
+  .ropt.right { border-color: var(--ok); background: var(--ok-bg); }
+  .ropt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+  .ropt.right .bubble { background: var(--ok); border-color: var(--ok); color: var(--on-solid); }
+  .ropt.wrong .bubble { background: var(--bad); border-color: var(--bad); color: var(--on-solid); }
+  .tag { display: block; font-size: .875rem; font-weight: 700; margin-top: .15rem; }
+  .ropt.right .tag { color: var(--ok); }
+  .ropt.wrong .tag { color: var(--bad); }
+  .why { border-top: 1px solid var(--rule); padding-top: .9rem; max-width: 68ch; }
+  .why p { margin: 0 0 .6rem; }
+  .why a { color: var(--form); text-underline-offset: .15em; }
+  .empty { margin-top: 1rem; color: var(--ink-2); }
+  .foot { margin-top: 2.5rem; color: var(--ink-2); font-size: .875rem; }
+
+  dialog {
+    border: 1.5px solid var(--form); border-radius: .625rem; background: var(--sheet); color: var(--ink);
+    width: min(26rem, calc(100vw - 2rem)); padding: 1.5rem;
+  }
+  dialog::backdrop { background: rgba(10, 14, 30, .6); }
+  dialog h2 { margin: 0 0 .6rem; font-size: 1.25rem; }
+  dialog p { margin: 0 0 .5rem; }
+
+  @media (max-width: 52rem) {
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+    .sheet { position: static; max-height: none; padding-right: 1rem; }
+    .rows { overflow: visible; display: grid; grid-template-columns: repeat(5, 1fr); gap: .45rem; padding: 0; }
+    .cols { display: none; }
+    .row { display: flex; justify-content: center; gap: .3rem; padding: .6rem 0; border: 1.5px solid var(--rule); border-radius: .5rem; }
+    .row .bub { display: none; }
+    .row.done { background: var(--pencil); border-color: var(--pencil); }
+    .row.done .num { color: var(--paper); }
+    .row[aria-current="step"] { box-shadow: 0 0 0 2px var(--form); }
+    .row.ok { border-color: var(--ok); background: var(--ok-bg); }
+    .row.bad { border-color: var(--bad); background: var(--bad-bg); }
+    .row.none { border-color: var(--miss); background: var(--miss-bg); }
+    .row.ok .num, .row.bad .num, .row.none .num { color: var(--ink); }
+    .mobile-only { display: inline-flex; align-items: center; }
+    .top { flex-wrap: wrap; }
+    .qcard, .summary { padding: 1.1rem; }
+    .rev { padding: 1rem 1.1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>AWS Developer Associate practice</h1>
+      <p class="sub" id="sub">25 questions worth 26 points. Answers and explanations appear after you submit.</p>
+    </div>
+    <button type="button" class="btn primary mobile-only" id="topSubmit">Submit answers</button>
+  </header>
+
+  <div class="layout">
+    <main id="main" aria-live="off"><noscript>This practice set needs JavaScript to run.</noscript></main>
+
+    <aside class="sheet" aria-label="Answer sheet">
+      <div class="sheet-head">
+        <h2>Answer sheet</h2>
+        <p class="small" id="count"></p>
+      </div>
+      <div class="cols" aria-hidden="true">
+        <span></span><span></span>
+        <span class="bub"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span></span>
+      </div>
+      <div class="rows" id="rows"></div>
+      <div class="sheet-foot">
+        <p class="small" id="sheetHelp">Select a number to jump to that question.</p>
+        <button type="button" class="btn primary" id="sheetAction">Submit answers</button>
+      </div>
+    </aside>
+  </div>
+
+  <p class="foot">Practice questions for the AWS Certified Developer Associate exam. Not affiliated with or endorsed by AWS.</p>
+</div>
+
+<dialog id="confirm" aria-labelledby="cTitle">
+  <h2 id="cTitle">Submit your answers?</h2>
+  <div id="cBody"></div>
+  <div class="actions">
+    <button type="button" class="btn" id="cCancel">Keep working</button>
+    <span class="spacer"></span>
+    <button type="button" class="btn primary" id="cOk">Submit answers</button>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+
+  var DOCS = 'https://docs.aws.amazon.com/';
+
+  var QUESTIONS = [
+    { id: 1, pts: 1, correct: [1],
+      text: "A developer maintains applications that store several secrets in AWS Secrets Manager. The applications use secrets that have changed over time. The developer needs to identify required secrets that are still in use. The developer does not want to cause any application downtime. What should the developer do to meet these requirements?",
+      options: [
+        "Configure an AWS CloudTrail log file delivery to an Amazon S3 bucket. Create an Amazon CloudWatch alarm for the `GetSecretValue` Secrets Manager API operation requests.",
+        "Create a `secretsmanager-secret-unused` AWS Config managed rule. Create an Amazon EventBridge rule to initiate notifications when the AWS Config managed rule is met.",
+        "Deactivate the applications secrets and monitor the applications error logs temporarily.",
+        "Configure AWS X-Ray for the applications. Create a sampling rule to match the `GetSecretValue` Secrets Manager API operation requests."
+      ],
+      why: "The AWS Config managed rule `secretsmanager-secret-unused` checks whether each secret has been accessed within a set number of days (90 by default) and marks it non-compliant if not. That tells you which secrets are unused without touching any of them, and an EventBridge rule can notify you when the rule fires. Deactivating secrets risks breaking live applications. An alarm on `GetSecretValue` or an X-Ray sampling rule only reports usage as it happens; neither produces a list of unused secrets.",
+      links: [{ t: "AWS Config rule: secretsmanager-secret-unused", u: DOCS + "config/latest/developerguide/secretsmanager-secret-unused.html" }] },
+
+    { id: 2, pts: 1, correct: [2],
+      text: "A developer is writing a serverless application that requires an AWS Lambda function to be invoked every 10 minutes. What is an automated and serverless way to invoke the function?",
+      options: [
+        "Deploy an Amazon EC2 instance based on Linux, and edit its `/etc/crontab` file by adding a command to periodically invoke the Lambda function.",
+        "Configure an environment variable named `PERIOD` for the Lambda function. Set the value to 600.",
+        "Create an Amazon EventBridge rule that runs on a regular schedule to invoke the Lambda function.",
+        "Create an Amazon Simple Notification Service (Amazon SNS) topic that has a subscription to the Lambda function with a 600-second timer."
+      ],
+      why: "An Amazon EventBridge rule with a schedule such as `rate(10 minutes)` invokes the function on a fixed cadence with no servers to run. An EC2 cron job is not serverless, a `PERIOD` environment variable does nothing on its own, and SNS subscriptions have no timer.",
+      links: [{ t: "EventBridge scheduled rules", u: DOCS + "eventbridge/latest/userguide/eb-create-rule-schedule.html" }] },
+
+    { id: 3, pts: 1, correct: [0],
+      text: "An application runs on multiple EC2 instances behind an ELB. Where is the session data best written so that it can be served reliably across multiple requests?",
+      options: [
+        "Write data to Amazon ElastiCache.",
+        "Write data to Amazon Elastic Block Store.",
+        "Write data to Amazon EC2 Instance Store.",
+        "Write data to the root filesystem."
+      ],
+      why: "A load balancer can send each request to a different instance, so session data has to live outside the instances. ElastiCache is a shared, low-latency in-memory store that every instance can reach. A standard EBS volume is attached to one instance, and instance store and the root file system are local to that instance.",
+      links: [{ t: "Session management with ElastiCache", u: "https://aws.amazon.com/caching/session-management/" }] },
+
+    { id: 4, pts: 1, correct: [1],
+      text: "A developer has written an AWS Lambda function. The function is CPU-bound. The developer wants to ensure that the function returns responses quickly. How can the developer improve the function's performance?",
+      options: [
+        "Increase the function's CPU core count.",
+        "Increase the function's memory.",
+        "Increase the function's reserved concurrency.",
+        "Increase the function's timeout."
+      ],
+      why: "Lambda allocates CPU power in proportion to the memory you configure, and there is no separate CPU setting. Raising memory gives a CPU-bound function more CPU and shortens its run time. Reserved concurrency and timeout do not change how fast a single invocation runs.",
+      links: [{ t: "Configuring Lambda function memory", u: DOCS + "lambda/latest/dg/configuration-memory.html" }] },
+
+    { id: 5, pts: 1, correct: [2],
+      text: "A developer must analyze performance issues with production-distributed applications written as AWS Lambda functions. These distributed Lambda applications invoke other components that make up the applications. How should the developer identify and troubleshoot the root cause of the performance issues in production?",
+      options: [
+        "Add logging statements to the Lambda functions, then use Amazon CloudWatch to view the logs.",
+        "Use AWS CloudTrail and then examine the logs.",
+        "Use AWS X-Ray, then examine the segments and errors.",
+        "Run Amazon Inspector agents and then analyze performance."
+      ],
+      why: "AWS X-Ray traces a request as it travels through Lambda functions and the services they call. It shows a service map plus segments, timings, and errors, which is what you need to find the slow or failing component. Logs and CloudTrail do not give an end-to-end view of a request, and Amazon Inspector assesses vulnerabilities, not performance.",
+      links: [{ t: "What is AWS X-Ray?", u: DOCS + "xray/latest/devguide/aws-xray.html" }] },
+
+    { id: 6, pts: 1, correct: [1],
+      text: "A developer wants to deploy a new version of an AWS Elastic Beanstalk application. During deployment, the application must maintain full capacity and avoid service interruption. Additionally, the developer must minimize the cost of additional resources that support the deployment. Which deployment method should the developer use to meet these requirements?",
+      options: [
+        "All at once",
+        "Rolling with additional batch",
+        "Blue/green",
+        "Immutable"
+      ],
+      why: "Rolling with additional batch launches a new batch of instances before taking any old ones out of service, so the environment stays at full capacity. The only extra cost is a small batch that is removed when the deployment finishes. Immutable and blue/green both stand up a whole extra set of instances, which costs more, and All at once takes every instance out of service at the same time.",
+      links: [{ t: "Elastic Beanstalk deployment policies and settings", u: DOCS + "elasticbeanstalk/latest/dg/using-features.rolling-version-deploy.html" }] },
+
+    { id: 7, pts: 1, correct: [0],
+      text: "A developer is troubleshooting an application that uses Amazon DynamoDB in the us-west-2 Region. The application is deployed to an Amazon EC2 instance. The application requires read-only permissions to a table that is named Cars. The EC2 instance has an attached IAM role that contains an IAM policy (shown as an exhibit in the original exam). When the application tries to read from the Cars table, an Access Denied error occurs. How can the developer resolve this error?",
+      note: "The IAM policy exhibit was not part of the text provided, so it is not shown here.",
+      options: [
+        "Modify the IAM policy resource to be \u201Carn:aws:dynamodb:us-west-2:account-id:table/*\u201D.",
+        "Modify the IAM policy to include the `dynamodb:*` action.",
+        "Create a trust policy that specifies the EC2 service principal. Associate the role with the policy.",
+        "Create a trust relationship between the role and `dynamodb.amazonaws.com`."
+      ],
+      why: "The role is already attached to the instance, so trust is working and the problem is in the permissions policy. In this question the policy's `Resource` does not match the table ARN in us-west-2, so the allow statement never applies. Correcting the resource ARN fixes the error. Adding `dynamodb:*` would grant far more than read-only access, and trust policies control who can assume a role, not what the role can do.",
+      caveat: "This follows the commonly published answer for this question. Without the exhibit, it can't be checked against the actual policy. If yours differs, confirm that the `Action` list includes the read actions and that `Resource` is a valid table ARN for us-west-2.",
+      links: [{ t: "Identity-based IAM policies for DynamoDB", u: DOCS + "amazondynamodb/latest/developerguide/using-identity-based-policies.html" }] },
+
+    { id: 8, pts: 1, correct: [1],
+      text: "When using the AWS Encryption SDK, how does the developer keep track of the data encryption keys used to encrypt data?",
+      options: [
+        "The developer must manually keep track of the data encryption keys used for each data object.",
+        "The SDK encrypts the data encryption key and stores it (encrypted) as part of the returned ciphertext.",
+        "The SDK stores the data encryption keys automatically in Amazon S3.",
+        "The data encryption key is stored in the Userdata for the EC2 instance."
+      ],
+      why: "The AWS Encryption SDK generates a data key for each message, encrypts that key under your wrapping key, and stores the encrypted data key inside the encrypted message it returns. You never track keys yourself: when you decrypt, the SDK uses the wrapping key to recover the data key.",
+      links: [{ t: "AWS Encryption SDK concepts", u: DOCS + "encryption-sdk/latest/developer-guide/concepts.html" }] },
+
+    { id: 9, pts: 1, correct: [2],
+      text: "A developer at a company needs to create a small application that makes the same API call once each day at a designated time. The company does not have infrastructure in the AWS Cloud yet, but the company wants to implement this functionality on AWS. Which solution meets these requirements in the MOST operationally efficient manner?",
+      options: [
+        "Use a Kubernetes cron job that runs on Amazon Elastic Kubernetes Service (Amazon EKS).",
+        "Use an Amazon Linux crontab scheduled job that runs on Amazon EC2.",
+        "Use an AWS Lambda function that is invoked by an Amazon EventBridge scheduled event.",
+        "Use an AWS Batch job that is submitted to an AWS Batch job queue."
+      ],
+      why: "A scheduled EventBridge event that invokes a Lambda function needs no servers, cluster, or patching, and you pay only when it runs. EKS, EC2, and AWS Batch all add infrastructure to set up and maintain for a task that runs once a day.",
+      links: [{ t: "EventBridge scheduled rules", u: DOCS + "eventbridge/latest/userguide/eb-create-rule-schedule.html" }] },
+
+    { id: 10, pts: 1, correct: [1],
+      text: "A developer is building a serverless application that is based on AWS Lambda. The developer initializes the AWS software development kit (SDK) outside of the Lambda handler function. What is the PRIMARY benefit of this action?",
+      options: [
+        "Improves legibility and stylistic convention",
+        "Takes advantage of runtime environment reuse",
+        "Provides better error handling",
+        "Creates a new SDK instance for each invocation"
+      ],
+      why: "Objects created outside the handler, such as SDK clients and database connections, are initialized once per execution environment and reused by later warm invocations. That saves initialization time on every call after the first. It is a performance benefit, not a style or error-handling one, and it is the opposite of creating a new instance on every invocation.",
+      links: [{ t: "Lambda best practices", u: DOCS + "lambda/latest/dg/best-practices.html" }] },
+
+    { id: 11, pts: 1, correct: [2],
+      text: "A company is using Amazon RDS as the backend database for its application. After a recent marketing campaign, a surge of read requests to the database increased the latency of data retrieval from the database. The company has decided to implement a caching layer in front of the database. The cached content must be encrypted and must be highly available. Which solution will meet these requirements?",
+      options: [
+        "Amazon CloudFront",
+        "Amazon ElastiCache for Memcached",
+        "Amazon ElastiCache for Redis in cluster mode",
+        "Amazon DynamoDB Accelerator (DAX)"
+      ],
+      why: "ElastiCache for Redis supports encryption at rest and in transit, and with replicas and Multi-AZ automatic failover it is highly available; cluster mode adds sharding on top. ElastiCache for Memcached has no replication or failover and no at-rest encryption. DAX only sits in front of DynamoDB, and CloudFront is a content delivery network, not a database cache.",
+      links: [{ t: "Redis vs. Memcached on ElastiCache", u: "https://aws.amazon.com/elasticache/redis-vs-memcached/" }] },
+
+    { id: 12, pts: 1, correct: [2],
+      text: "A developer has an application that is composed of many different AWS Lambda functions. The Lambda functions all use some of the same dependencies. To avoid security issues, the developer is constantly updating the dependencies of all of the Lambda functions. The result is duplicated effort for each function. How can the developer keep the dependencies of the Lambda functions up to date with the LEAST additional complexity?",
+      options: [
+        "Define a maintenance window for the Lambda functions to ensure that the functions get updated copies of the dependencies.",
+        "Upgrade the Lambda functions to the most recent runtime version.",
+        "Define a Lambda layer that contains all of the shared dependencies.",
+        "Use an AWS CodeCommit repository to host the dependencies in a centralized location."
+      ],
+      why: "A Lambda layer packages the shared libraries once, and every function that references it uses the same copy. When a dependency needs a security update, you publish a new layer version instead of repackaging each function. Maintenance windows, runtime upgrades, and a CodeCommit repository do not remove the duplicated packaging work.",
+      links: [{ t: "Managing Lambda dependencies with layers", u: DOCS + "lambda/latest/dg/chapter-layers.html" }] },
+
+    { id: 13, pts: 1, correct: [3],
+      text: "A company is building an application for stock trading. The application needs sub-millisecond latency for processing trade requests. The company uses Amazon DynamoDB to store all the trading data that is used to process each trading request. A development team performs load testing on the application and finds that the data retrieval time is higher than expected. The development team needs a solution that reduces the data retrieval time with the least possible effort. Which solution meets these requirements?",
+      options: [
+        "Add local secondary indexes (LSIs) for the trading data.",
+        "Store the trading data in Amazon S3, and use S3 Transfer Acceleration.",
+        "Add retries with exponential backoff for DynamoDB queries.",
+        "Use DynamoDB Accelerator (DAX) to cache the trading data."
+      ],
+      why: "DAX is a fully managed in-memory cache built for DynamoDB. It serves reads in microseconds and is API-compatible with DynamoDB, so very little code changes. LSIs are alternate sort keys and do not bring reads down to sub-millisecond latency. S3 Transfer Acceleration speeds up transfers to S3, and retries with backoff handle throttling, not slow reads.",
+      links: [{ t: "DynamoDB Accelerator (DAX)", u: DOCS + "amazondynamodb/latest/developerguide/DAX.html" }] },
+
+    { id: 14, pts: 2, correct: [1, 4],
+      text: "A developer is working on a Python application that runs on Amazon EC2 instances. The developer wants to enable tracing of application requests to debug performance issues in the code. Which combination of actions should the developer take to achieve this goal?",
+      options: [
+        "Install the Amazon CloudWatch agent on the EC2 instances.",
+        "Install the AWS X-Ray daemon on the EC2 instances.",
+        "Configure the application to write JSON-formatted logs to `/var/log/cloudwatch`.",
+        "Configure the application to write trace data to `/var/log/xray`.",
+        "Install and configure the AWS X-Ray SDK for Python in the application."
+      ],
+      why: "Tracing needs two pieces. The X-Ray SDK for Python instruments the application code and produces segments, and the X-Ray daemon running on the instance batches those segments and sends them to X-Ray. The CloudWatch agent collects logs and metrics, not traces, and writing files to `/var/log/...` is not how trace data reaches X-Ray.",
+      links: [
+        { t: "X-Ray daemon", u: DOCS + "xray/latest/devguide/xray-daemon.html" },
+        { t: "X-Ray SDK for Python", u: DOCS + "xray/latest/devguide/xray-sdk-python.html" }
+      ] },
+
+    { id: 15, pts: 1, correct: [2],
+      text: "A company has an application that runs as a series of AWS Lambda functions. Each Lambda function receives data from an Amazon Simple Notification Service (Amazon SNS) topic and writes the data to an Amazon Aurora DB instance. To comply with an information security policy, the company must ensure that the Lambda functions all use a single securely encrypted database connection string to access Aurora. Which solution will meet these requirements?",
+      options: [
+        "Use IAM database authentication for Aurora to enable secure database connections for all the Lambda functions.",
+        "Store the credentials and read the credentials from an encrypted Amazon RDS DB instance.",
+        "Store the credentials in AWS Systems Manager Parameter Store as a secure string parameter.",
+        "Use Lambda environment variables with a shared AWS Key Management Service (AWS KMS) key for encryption."
+      ],
+      why: "A SecureString parameter in Systems Manager Parameter Store gives every Lambda function one shared value that is encrypted with KMS. Each function's role only needs permission to read it. IAM database authentication issues short-lived tokens per connection rather than a single connection string. Environment variables mean a separate copy inside every function, and an RDS instance is not a credential store.",
+      caveat: "AWS Secrets Manager would also be a strong real-world choice here, but it is not one of the options.",
+      links: [{ t: "Systems Manager Parameter Store", u: DOCS + "systems-manager/latest/userguide/systems-manager-parameter-store.html" }] },
+
+    { id: 16, pts: 1, correct: [3],
+      text: "A developer is troubleshooting an Amazon API Gateway API. Clients are receiving HTTP 400 response errors when the clients try to access an endpoint of the API. How can the developer determine the cause of these errors?",
+      options: [
+        "Create an Amazon Kinesis Data Firehose delivery stream to receive API call logs from API Gateway. Configure Amazon CloudWatch Logs as the delivery stream\u2019s destination.",
+        "Turn on AWS CloudTrail Insights and create a trail. Specify the Amazon Resource Name (ARN) of the trail for the stage of the API.",
+        "Turn on AWS X-Ray for the API stage. Create an Amazon CloudWatch Logs log group. Specify the Amazon Resource Name (ARN) of the log group for the API stage.",
+        "Turn on execution logging and access logging in Amazon CloudWatch Logs for the API stage. Create a CloudWatch Logs log group. Specify the Amazon Resource Name (ARN) of the log group for the API stage."
+      ],
+      why: "Execution logging and access logging for the stage send request details and error messages to a CloudWatch Logs log group, which shows why API Gateway returned a 400. CloudTrail records management API calls, not client requests. X-Ray traces latency and downstream calls, and Kinesis Data Firehose is not how API Gateway publishes its logs.",
+      links: [{ t: "Set up CloudWatch logging for API Gateway", u: DOCS + "apigateway/latest/developerguide/set-up-logging.html" }] },
+
+    { id: 17, pts: 1, correct: [3],
+      text: "A company is using AWS CloudFormation to deploy a two-tier application. The application will use Amazon RDS as its backend database. The company wants a solution that will randomly generate the database password during deployment. The solution also must automatically rotate the database password without requiring changes to the application. What is the MOST operationally efficient solution that meets these requirements?",
+      options: [
+        "Use an AWS Lambda function as a CloudFormation custom resource to generate and rotate the password.",
+        "Use an AWS Systems Manager Parameter Store resource with the SecureString data type to generate and rotate the password.",
+        "Use a cron daemon on the application\u2019s host to generate and rotate the password.",
+        "Use an AWS Secrets Manager resource to generate and rotate the password."
+      ],
+      why: "A Secrets Manager secret defined in CloudFormation can generate a random password when it is created (`GenerateSecretString`) and rotate it on a schedule using managed rotation for RDS. The application just reads the current secret. Parameter Store cannot generate or rotate passwords by itself, and a custom resource or cron daemon means more to build and maintain.",
+      links: [{ t: "Rotating AWS Secrets Manager secrets", u: DOCS + "secretsmanager/latest/userguide/rotating-secrets.html" }] },
+
+    { id: 18, pts: 1, correct: [1],
+      text: "A developer needs to deploy an application running on AWS Fargate using Amazon ECS. The application has environment variables that must be passed to a container for the application to initialize. How should the environment variables be passed to the container?",
+      options: [
+        "Define an array that includes the environment variables under the `environment` parameter within the service definition.",
+        "Define an array that includes the environment variables under the `environment` parameter within the task definition.",
+        "Define an array that includes the environment variables under the `entryPoint` parameter within the task definition.",
+        "Define an array that includes the environment variables under the `entryPoint` parameter within the service definition."
+      ],
+      why: "Container environment variables go in the `environment` array of the container definition, which is part of the task definition. The service definition controls how many tasks run and how they are networked, not container settings, and `entryPoint` sets the command a container starts with, not its environment.",
+      links: [{ t: "ECS task definition parameters", u: DOCS + "AmazonECS/latest/developerguide/task_definition_parameters.html" }] },
+
+    { id: 19, pts: 1, correct: [1],
+      text: "A developer is storing sensitive data generated by an application in Amazon S3. The developer wants to encrypt the data at rest. A company policy requires an audit trail of when the AWS Key Management Service (AWS KMS) key was used and by whom. Which encryption option will meet these requirements?",
+      options: [
+        "Server-side encryption with Amazon S3 managed keys (SSE-S3)",
+        "Server-side encryption with AWS KMS managed keys (SSE-KMS)",
+        "Server-side encryption with customer-provided keys (SSE-C)",
+        "Server-side encryption with self-managed keys"
+      ],
+      why: "With SSE-KMS, every use of the KMS key is recorded in AWS CloudTrail, showing who used the key and when. That satisfies the audit requirement. SSE-S3 keys are managed by S3 and give you no per-use key audit trail, and with SSE-C you supply and manage the key yourself, so KMS is not involved.",
+      links: [{ t: "Protecting data with SSE-KMS", u: DOCS + "AmazonS3/latest/userguide/UsingKMSEncryption.html" }] },
+
+    { id: 20, pts: 1, correct: [0],
+      text: "A company is offering APIs as a service over the internet to provide unauthenticated read access to statistical information that is updated daily. The company uses Amazon API Gateway and AWS Lambda to develop the APIs. The service has become popular, and the company wants to enhance the responsiveness of the APIs. Which action can help the company achieve this goal?",
+      options: [
+        "Enable API caching in API Gateway.",
+        "Configure API Gateway to use an interface VPC endpoint.",
+        "Enable cross-origin resource sharing (CORS) for the APIs.",
+        "Configure usage plans and API keys in API Gateway."
+      ],
+      why: "Enabling API caching on the stage stores endpoint responses for a configurable time to live. For data that changes once a day, repeated requests are served from the cache without invoking Lambda again, which lowers latency. CORS, usage plans with API keys, and interface VPC endpoints do not make public read requests faster.",
+      links: [{ t: "Enable API caching in API Gateway", u: DOCS + "apigateway/latest/developerguide/api-gateway-caching.html" }] },
+
+    { id: 21, pts: 1, correct: [0],
+      text: "A company needs to distribute firmware updates to its customers around the world. Which service will allow easy and secure control of the access to the downloads at the lowest cost?",
+      options: [
+        "Use Amazon CloudFront with signed URLs for Amazon S3.",
+        "Create a dedicated Amazon CloudFront Distribution for each customer.",
+        "Use Amazon CloudFront with AWS Lambda@Edge.",
+        "Use Amazon API Gateway and AWS Lambda to control access to an S3 bucket."
+      ],
+      why: "CloudFront caches downloads at edge locations worldwide, and signed URLs restrict access to authorized customers, all from one distribution in front of S3. A distribution per customer, Lambda@Edge, or API Gateway with Lambda each add cost and complexity for something signed URLs already do.",
+      links: [{ t: "CloudFront signed URLs", u: DOCS + "AmazonCloudFront/latest/DeveloperGuide/private-content-signed-urls.html" }] },
+
+    { id: 22, pts: 1, correct: [1],
+      text: "A developer is testing an application that invokes an AWS Lambda function asynchronously. During the testing phase, the Lambda function fails to process after two retries. How can the developer troubleshoot the failure?",
+      options: [
+        "Configure AWS CloudTrail logging to investigate the invocation failures.",
+        "Configure Dead Letter Queues by sending events to Amazon SQS for investigation.",
+        "Configure Amazon Simple Workflow Service to process any direct unprocessed events.",
+        "Configure AWS Config to process any direct unprocessed events."
+      ],
+      why: "Lambda retries a failed asynchronous invocation twice. A dead-letter queue (SQS or SNS) receives the event once those retries are exhausted, so you can inspect the payload and work out why it failed. Lambda destinations for failed invocations are a newer alternative. CloudTrail logs API calls rather than event payloads, and neither SWF nor AWS Config processes unhandled Lambda events.",
+      links: [{ t: "Asynchronous invocation in Lambda", u: DOCS + "lambda/latest/dg/invocation-async.html" }] },
+
+    { id: 23, pts: 1, correct: [1],
+      text: "A company is migrating its PostgreSQL database into the AWS Cloud. The company wants to use a database that will secure and regularly rotate database credentials. The company wants a solution that does not require additional programming overhead. Which solution will meet these requirements?",
+      options: [
+        "Use Amazon Aurora PostgreSQL for the database. Store the database credentials in AWS Systems Manager Parameter Store. Turn on rotation.",
+        "Use Amazon Aurora PostgreSQL for the database. Store the database credentials in AWS Secrets Manager. Turn on rotation.",
+        "Use Amazon DynamoDB for the database. Store the database credentials in AWS Systems Manager Parameter Store. Turn on rotation.",
+        "Use Amazon DynamoDB for the database. Store the database credentials in AWS Secrets Manager. Turn on rotation."
+      ],
+      why: "Aurora PostgreSQL is PostgreSQL-compatible, and Secrets Manager has built-in rotation for RDS and Aurora credentials using AWS-provided rotation functions, so you do not write the rotation code. Parameter Store has no native rotation, and DynamoDB is not a PostgreSQL database.",
+      links: [{ t: "Rotating AWS Secrets Manager secrets", u: DOCS + "secretsmanager/latest/userguide/rotating-secrets.html" }] },
+
+    { id: 24, pts: 1, correct: [3],
+      text: "A developer is creating a mobile application that will not require users to log in. What is the MOST efficient method to grant users access to AWS resources?",
+      options: [
+        "Use an identity provider to securely authenticate with the application.",
+        "Create an AWS Lambda function to create an IAM user when a user accesses the application.",
+        "Create credentials using AWS KMS and apply these credentials to users when using the application.",
+        "Use Amazon Cognito to associate unauthenticated users with an IAM role that has limited access to resources."
+      ],
+      why: "Amazon Cognito identity pools can give unauthenticated (guest) users temporary AWS credentials tied to an IAM role with limited permissions. There is no login, no custom identity code, and no long-lived credentials. An identity provider assumes users sign in, creating IAM users on demand is heavy and insecure, and KMS does not issue access credentials.",
+      links: [{ t: "Cognito identity pools", u: DOCS + "cognito/latest/developerguide/identity-pools.html" }] },
+
+    { id: 25, pts: 1, correct: [2],
+      text: "A company has developed a new serverless application using AWS Lambda functions that will be deployed using the AWS Serverless Application Model (AWS SAM) CLI. Which step should the developer complete prior to deploying the application?",
+      options: [
+        "Compress the application to a .zip file and upload it into AWS Lambda.",
+        "Test the new AWS Lambda function by first tracing it in AWS X-Ray.",
+        "Bundle the serverless application using a SAM package.",
+        "Create the application environment using the `eb create my-env` command."
+      ],
+      why: "`sam package` zips your code, uploads it to Amazon S3, and outputs a template that points to the uploaded artifacts, ready for `sam deploy`. Uploading a zip to Lambda by hand skips SAM, X-Ray tracing is optional, and `eb create` is an Elastic Beanstalk command.",
+      caveat: "Newer SAM CLI versions can package as part of `sam deploy`, but among these options packaging is the step that comes before deployment.",
+      links: [{ t: "sam package command reference", u: DOCS + "serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-package.html" }] }
+  ];
+
+  var LETTERS = ['A', 'B', 'C', 'D', 'E'];
+  var KEY = 'dva-practice-v1';
+  var byId = {};
+  QUESTIONS.forEach(function (q) { byId[q.id] = q; });
+  var ALL_IDS = QUESTIONS.map(function (q) { return q.id; });
+
+  function freshState() {
+    return { order: ALL_IDS.slice(), cur: 0, answers: {}, flags: {}, submitted: false, filter: 'all' };
+  }
+
+  function loadState() {
+    var s = freshState();
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return s;
+      var p = JSON.parse(raw);
+      if (!p || !Array.isArray(p.order) || !p.order.length) return s;
+      var okOrder = p.order.every(function (id) { return byId[id]; });
+      if (!okOrder) return s;
+      s.order = p.order;
+      s.cur = Math.min(Math.max(parseInt(p.cur, 10) || 0, 0), s.order.length - 1);
+      s.submitted = !!p.submitted;
+      s.filter = ['all', 'bad', 'none'].indexOf(p.filter) >= 0 ? p.filter : 'all';
+      if (p.answers && typeof p.answers === 'object') {
+        Object.keys(p.answers).forEach(function (k) {
+          var q = byId[k], a = p.answers[k];
+          if (q && Array.isArray(a)) {
+            a = a.filter(function (n) { return Number.isInteger(n) && n >= 0 && n < q.options.length; });
+            if (a.length) s.answers[k] = a.slice(0, q.correct.length);
+          }
+        });
+      }
+      if (p.flags && typeof p.flags === 'object') {
+        Object.keys(p.flags).forEach(function (k) { if (byId[k] && p.flags[k]) s.flags[k] = true; });
+      }
+    } catch (e) { return freshState(); }
+    return s;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  var S = loadState();
+
+  var main = document.getElementById('main');
+  var rowsEl = document.getElementById('rows');
+  var countEl = document.getElementById('count');
+  var sheetAction = document.getElementById('sheetAction');
+  var sheetHelp = document.getElementById('sheetHelp');
+  var topSubmit = document.getElementById('topSubmit');
+  var subEl = document.getElementById('sub');
+  var dlg = document.getElementById('confirm');
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function fmt(s) { return esc(s).replace(/`([^`]+)`/g, '<code>$1</code>'); }
+  function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+
+  function picks(q) { return S.answers[q.id] || []; }
+  function isRight(q) {
+    var a = picks(q);
+    return a.length === q.correct.length && q.correct.every(function (i) { return a.indexOf(i) >= 0; });
+  }
+  function statusOf(q) {
+    if (!picks(q).length) return 'none';
+    return isRight(q) ? 'ok' : 'bad';
+  }
+  function curQ() { return byId[S.order[S.cur]]; }
+
+  /* ---------- Answer sheet ---------- */
+  var STATUS_TEXT = { ok: 'correct', bad: 'incorrect', none: 'not answered' };
+
+  function renderSheet() {
+    rowsEl.innerHTML = S.order.map(function (id, i) {
+      var q = byId[id], a = picks(q), cls = 'row', mk = '', label = 'Question ' + id;
+      if (S.submitted) {
+        var st = statusOf(q);
+        cls += ' ' + st;
+        mk = st === 'ok' ? '\u2713' : st === 'bad' ? '\u2717' : '\u2013';
+        label += ', ' + STATUS_TEXT[st];
+      } else {
+        if (a.length) cls += ' done';
+        if (S.flags[id]) { mk = '\u2691'; label += ', flagged'; }
+        label += a.length ? ', answered' : ', not answered';
+      }
+      var bub = '';
+      for (var j = 0; j < 5; j++) {
+        if (j >= q.options.length) { bub += '<i class="b gap"></i>'; continue; }
+        var c = 'b';
+        if (S.submitted) {
+          if (q.correct.indexOf(j) >= 0) c += ' right';
+          else if (a.indexOf(j) >= 0) c += ' wrong';
+        } else if (a.indexOf(j) >= 0) c += ' on';
+        bub += '<i class="' + c + '"></i>';
+      }
+      var cur = (!S.submitted && i === S.cur) ? ' aria-current="step"' : '';
+      return '<button type="button" class="' + cls + '" data-i="' + i + '" aria-label="' + label + '"' + cur + '>' +
+        '<span class="num">' + id + '</span><span class="mk" aria-hidden="true">' + mk + '</span>' +
+        '<span class="bub" aria-hidden="true">' + bub + '</span></button>';
+    }).join('');
+
+    var total = S.order.length;
+    if (S.submitted) {
+      var r = S.order.filter(function (id) { return isRight(byId[id]); }).length;
+      countEl.textContent = r + ' of ' + total + ' correct';
+      sheetAction.textContent = 'Start over';
+      sheetAction.dataset.act = 'restart';
+      sheetAction.classList.remove('primary');
+      sheetHelp.textContent = 'Select a number to jump to its explanation.';
+      topSubmit.hidden = true;
+    } else {
+      var n = S.order.filter(function (id) { return picks(byId[id]).length; }).length;
+      countEl.textContent = n + ' of ' + total + ' answered';
+      sheetAction.textContent = 'Submit answers';
+      sheetAction.dataset.act = 'submit';
+      sheetAction.classList.add('primary');
+      sheetHelp.textContent = 'Select a number to jump to that question.';
+      topSubmit.hidden = false;
+    }
+    subEl.textContent = S.order.length < ALL_IDS.length
+      ? 'Retrying ' + plural(S.order.length, 'missed question') + '. Answers appear after you submit.'
+      : '25 questions worth 26 points. Answers and explanations appear after you submit.';
+  }
+
+  /* ---------- Question view ---------- */
+  function renderQuestion() {
+    var q = curQ(), a = picks(q), multi = q.correct.length > 1, total = S.order.length;
+    var opts = q.options.map(function (o, j) {
+      var checked = a.indexOf(j) >= 0;
+      return '<label class="opt' + (checked ? ' picked' : '') + '">' +
+        '<input type="' + (multi ? 'checkbox' : 'radio') + '" name="opt" value="' + j + '"' + (checked ? ' checked' : '') + '>' +
+        '<span class="bubble" aria-hidden="true">' + LETTERS[j] + '</span>' +
+        '<span class="otext">' + fmt(o) + '</span></label>';
+    }).join('');
+    var isLast = S.cur === total - 1;
+    var hasHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+    main.innerHTML =
+      '<section class="qcard" aria-labelledby="qt">' +
+        '<div class="qhead"><strong>Question ' + q.id + ' <span style="font-weight:400;color:var(--ink-2)">(' + (S.cur + 1) + ' of ' + total + ')</span></strong>' +
+        '<span>' + (multi ? 'Choose two' : 'Choose one') + '. Worth ' + plural(q.pts, 'point') + '.</span></div>' +
+        '<h2 class="qtext" id="qt" tabindex="-1">' + fmt(q.text) + '</h2>' +
+        (q.note ? '<p class="note">' + fmt(q.note) + '</p>' : '') +
+        '<div class="opts' + (multi ? ' multi' : '') + '" role="' + (multi ? 'group' : 'radiogroup') + '" aria-labelledby="qt">' + opts + '</div>' +
+        '<p class="hint" id="hint" aria-live="polite">' + (multi ? 'Pick exactly two answers.' : (hasHover ? 'Tip: press A to D on your keyboard to choose.' : '')) + '</p>' +
+        '<div class="actions">' +
+          '<button type="button" class="btn" data-act="prev"' + (S.cur === 0 ? ' disabled' : '') + '>Previous</button>' +
+          '<button type="button" class="btn quiet" data-act="flag" aria-pressed="' + (S.flags[q.id] ? 'true' : 'false') + '">Flag for review</button>' +
+          '<button type="button" class="btn quiet" data-act="clear">Clear answer</button>' +
+          '<span class="spacer"></span>' +
+          '<button type="button" class="btn primary" data-act="' + (isLast ? 'submit' : 'next') + '">' + (isLast ? 'Submit answers' : 'Next') + '</button>' +
+        '</div>' +
+      '</section>';
+  }
+
+  function setHint(msg) {
+    var h = document.getElementById('hint');
+    if (h) h.textContent = msg;
+  }
+
+  function onPick(input) {
+    var q = curQ(), j = parseInt(input.value, 10), a = picks(q).slice();
+    if (q.correct.length > 1) {
+      if (input.checked) {
+        if (a.length >= q.correct.length) {
+          input.checked = false;
+          setHint('You can pick two. Deselect one to change your choice.');
+          return;
+        }
+        a.push(j);
+      } else {
+        a = a.filter(function (x) { return x !== j; });
+      }
+      setHint(a.length === 2 ? 'Two answers selected.' : 'Pick exactly two answers.');
+    } else {
+      a = [j];
+    }
+    a.sort();
+    if (a.length) S.answers[q.id] = a; else delete S.answers[q.id];
+    Array.prototype.forEach.call(main.querySelectorAll('.opt'), function (l) {
+      l.classList.toggle('picked', l.querySelector('input').checked);
+    });
+    save();
+    renderSheet();
+  }
+
+  function go(i, focus) {
+    S.cur = Math.min(Math.max(i, 0), S.order.length - 1);
+    save();
+    renderSheet();
+    renderQuestion();
+    window.scrollTo(0, 0);
+    if (focus) { var t = document.getElementById('qt'); if (t) t.focus({ preventScroll: true }); }
+  }
+
+  /* ---------- Submit ---------- */
+  function trySubmit() {
+    var incomplete = S.order.filter(function (id) {
+      var q = byId[id];
+      return picks(q).length !== q.correct.length;
+    }).length;
+    var flagged = S.order.filter(function (id) { return S.flags[id]; }).length;
+    if (!incomplete && !flagged) { submit(); return; }
+    var html = '';
+    if (incomplete) html += '<p>' + plural(incomplete, 'question') + ' unanswered or only partly answered. ' + (incomplete === 1 ? 'It' : 'They') + ' will count as incorrect.</p>';
+    if (flagged) html += '<p>' + plural(flagged, 'question') + ' flagged for review.</p>';
+    document.getElementById('cBody').innerHTML = html;
+    if (dlg.showModal) dlg.showModal(); else submit();
+  }
+
+  function submit() {
+    S.submitted = true;
+    S.filter = 'all';
+    save();
+    renderSheet();
+    renderResults();
+    window.scrollTo(0, 0);
+    var h = document.getElementById('sum');
+    if (h) h.focus({ preventScroll: true });
+  }
+
+  /* ---------- Results ---------- */
+  function renderResults() {
+    var pts = 0, max = 0, right = 0, wrong = 0, none = 0, hasMulti = false;
+    S.order.forEach(function (id) {
+      var q = byId[id], st = statusOf(q);
+      max += q.pts;
+      if (q.correct.length > 1) hasMulti = true;
+      if (st === 'ok') { right++; pts += q.pts; } else if (st === 'bad') wrong++; else none++;
+    });
+    var total = S.order.length, missed = wrong + none, pct = Math.round(pts / max * 100);
+    var filters = [['all', 'All', total], ['bad', 'Incorrect', wrong], ['none', 'Not answered', none]];
+    main.innerHTML =
+      '<section class="summary" aria-labelledby="sum">' +
+        '<h2 id="sum" tabindex="-1">You scored ' + pts + ' of ' + max + ' points</h2>' +
+        '<p class="lead">' + right + ' of ' + total + ' questions correct (' + pct + '%). ' + wrong + ' incorrect, ' + none + ' not answered.</p>' +
+        (hasMulti ? '<p class="small">Two-answer questions earn their points only when both answers are right, with no partial credit.</p>' : '') +
+        '<div class="actions">' +
+          (missed ? '<button type="button" class="btn primary" data-act="retry">Retry missed questions</button>' : '') +
+          '<button type="button" class="btn" data-act="restart">Start over</button>' +
+        '</div>' +
+      '</section>' +
+      '<div class="filters" role="group" aria-label="Filter questions">' +
+        filters.map(function (f) {
+          return '<button type="button" class="chip" data-f="' + f[0] + '" aria-pressed="' + (S.filter === f[0]) + '">' + f[1] + ' (' + f[2] + ')</button>';
+        }).join('') +
+      '</div>' +
+      '<div id="list"></div>';
+    renderList();
+  }
+
+  function renderList() {
+    var ids = S.order.filter(function (id) {
+      return S.filter === 'all' || statusOf(byId[id]) === S.filter;
+    });
+    var list = document.getElementById('list');
+    list.innerHTML = ids.length
+      ? ids.map(function (id) { return reviewCard(byId[id]); }).join('')
+      : '<p class="empty">No questions in this group.</p>';
+  }
+
+  function reviewCard(q) {
+    var a = picks(q), st = statusOf(q);
+    var stLabel = { ok: '\u2713 Correct', bad: '\u2717 Incorrect', none: '\u2013 Not answered' }[st];
+    var opts = q.options.map(function (o, j) {
+      var isC = q.correct.indexOf(j) >= 0, isP = a.indexOf(j) >= 0, cls = 'ropt', tag = '';
+      if (isC) { cls += ' right'; tag = isP ? '\u2713 Your answer, correct' : '\u2713 Correct answer'; }
+      else if (isP) { cls += ' wrong'; tag = '\u2717 Your answer'; }
+      return '<li class="' + cls + '"><span class="bubble" aria-hidden="true">' + LETTERS[j] + '</span>' +
+        '<span class="otext">' + fmt(o) + (tag ? '<span class="tag">' + tag + '</span>' : '') + '</span></li>';
+    }).join('');
+    var earned = st === 'ok' ? q.pts : 0;
+    var links = q.links.map(function (l) {
+      return '<a href="' + esc(l.u) + '" target="_blank" rel="noopener noreferrer">' + esc(l.t) + '</a>';
+    }).join(', ');
+    return '<article class="rev ' + st + '" id="r-' + q.id + '">' +
+      '<div class="rhead"><h3>Question ' + q.id + '</h3><span class="status ' + st + '">' + stLabel + '</span>' +
+      '<span class="small">' + earned + ' of ' + plural(q.pts, 'point') + '</span></div>' +
+      '<p class="qtext" style="font-size:1.0625rem">' + fmt(q.text) + '</p>' +
+      (q.note ? '<p class="note">' + fmt(q.note) + '</p>' : '') +
+      '<ul class="ropts">' + opts + '</ul>' +
+      '<div class="why"><p>' + fmt(q.why) + '</p>' +
+      (q.caveat ? '<p class="small">' + fmt(q.caveat) + '</p>' : '') +
+      '<p class="small">Read more: ' + links + '</p></div></article>';
+  }
+
+  /* ---------- Actions ---------- */
+  function restart() {
+    S = freshState();
+    save();
+    renderAll();
+    window.scrollTo(0, 0);
+  }
+  function retryMissed() {
+    var ids = S.order.filter(function (id) { return statusOf(byId[id]) !== 'ok'; });
+    if (!ids.length) return;
+    ids.forEach(function (id) { delete S.answers[id]; delete S.flags[id]; });
+    S.order = ids;
+    S.cur = 0;
+    S.submitted = false;
+    S.filter = 'all';
+    save();
+    renderAll();
+    window.scrollTo(0, 0);
+  }
+
+  function act(name) {
+    var q = S.submitted ? null : curQ();
+    switch (name) {
+      case 'prev': go(S.cur - 1, true); break;
+      case 'next': go(S.cur + 1, true); break;
+      case 'clear':
+        delete S.answers[q.id]; save(); renderSheet(); renderQuestion(); break;
+      case 'flag':
+        if (S.flags[q.id]) delete S.flags[q.id]; else S.flags[q.id] = true;
+        save(); renderSheet();
+        var fb = main.querySelector('[data-act="flag"]');
+        if (fb) fb.setAttribute('aria-pressed', S.flags[q.id] ? 'true' : 'false');
+        break;
+      case 'submit': trySubmit(); break;
+      case 'restart': restart(); break;
+      case 'retry': retryMissed(); break;
+    }
+  }
+
+  main.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (b && !b.disabled) { act(b.dataset.act); return; }
+    var f = e.target.closest('[data-f]');
+    if (f) {
+      S.filter = f.dataset.f; save();
+      Array.prototype.forEach.call(main.querySelectorAll('[data-f]'), function (c) {
+        c.setAttribute('aria-pressed', c.dataset.f === S.filter ? 'true' : 'false');
+      });
+      renderList();
+    }
+  });
+  main.addEventListener('change', function (e) {
+    if (e.target && e.target.name === 'opt') onPick(e.target);
+  });
+  rowsEl.addEventListener('click', function (e) {
+    var r = e.target.closest('.row');
+    if (!r) return;
+    var i = parseInt(r.dataset.i, 10);
+    if (!S.submitted) { go(i, true); return; }
+    var id = S.order[i];
+    if (S.filter !== 'all' && statusOf(byId[id]) !== S.filter) {
+      S.filter = 'all'; save(); renderResults();
+    }
+    var card = document.getElementById('r-' + id);
+    if (card) card.scrollIntoView({ block: 'start' });
+  });
+  sheetAction.addEventListener('click', function () { act(sheetAction.dataset.act); });
+  topSubmit.addEventListener('click', function () { act('submit'); });
+  document.getElementById('cCancel').addEventListener('click', function () { dlg.close(); });
+  document.getElementById('cOk').addEventListener('click', function () { dlg.close(); submit(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (S.submitted || dlg.open || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+    var j = 'abcde'.indexOf(e.key.toLowerCase());
+    if (j < 0) return;
+    var inp = main.querySelector('input[name="opt"][value="' + j + '"]');
+    if (inp) { e.preventDefault(); inp.click(); }
+  });
+
+  function renderAll() {
+    renderSheet();
+    if (S.submitted) renderResults(); else renderQuestion();
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
