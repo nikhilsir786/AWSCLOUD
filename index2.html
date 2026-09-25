@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AWS Developer Associate — Practice Set</title>
+<style>
+:root{
+  --bg:#0F1621; --bg2:#141D2B; --panel:#182233; --ink:#EAF0F7; --ink-dim:#93A2B7;
+  --accent:#FF9F1C; --accent-ink:#1A1200; --good:#3DDC97; --bad:#FF6B6B; --line:#26334A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F5F3EE; --bg2:#EDEAE2; --panel:#FFFFFF; --ink:#1B1B18; --ink-dim:#6B6858;
+    --accent:#C2540A; --accent-ink:#FFF8EE; --good:#1E8A5F; --bad:#B3261E; --line:#DEDACE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1621; --bg2:#141D2B; --panel:#182233; --ink:#EAF0F7; --ink-dim:#93A2B7;
+  --accent:#FF9F1C; --accent-ink:#1A1200; --good:#3DDC97; --bad:#FF6B6B; --line:#26334A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{margin:0;padding:0;}
+body{
+  background:linear-gradient(180deg,var(--bg),var(--bg2) 60%);
+  color:var(--ink);
+  font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  min-height:100%;
+  padding:2.5rem 1.25rem 4rem;
+}
+.wrap{max-width:760px;margin:0 auto;}
+header{margin-bottom:2.5rem;}
+.kicker{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:0.72rem;letter-spacing:.04em;color:var(--accent);margin-bottom:.6rem;}
+h1{font-size:2.1rem;font-weight:600;line-height:1.15;letter-spacing:-.01em;}
+.sub{color:var(--ink-dim);margin-top:.6rem;font-size:1.02rem;max-width:56ch;line-height:1.5;}
+#score-band{
+  display:none;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:1rem 1.25rem;margin-bottom:2rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+}
+#score-band.show{display:flex;}
+#score-band .num{font-size:1.8rem;font-weight:600;}
+#score-band .lbl{color:var(--ink-dim);font-size:.9rem;}
+.q{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:1.5rem 1.5rem 1.35rem;margin-bottom:1.1rem;
+}
+.q .qhead{display:flex;gap:.75rem;align-items:baseline;margin-bottom:.85rem;}
+.q .idx{font-family:ui-monospace,'SF Mono',Menlo,monospace;color:var(--accent);font-size:.95rem;min-width:1.6rem;}
+.q .prompt{font-size:1.06rem;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:.5rem;}
+.opt{
+  display:flex;gap:.7rem;align-items:flex-start;padding:.65rem .8rem;
+  border:1px solid var(--line);border-radius:10px;cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+}
+.opt:hover{border-color:var(--accent);}
+.opt input{margin-top:.28rem;accent-color:var(--accent);flex-shrink:0;}
+.opt span{line-height:1.45;font-size:.97rem;}
+.opt.correct{border-color:var(--good);background:color-mix(in srgb, var(--good) 12%, transparent);}
+.opt.incorrect{border-color:var(--bad);background:color-mix(in srgb, var(--bad) 10%, transparent);}
+.tag{display:none;font-family:ui-monospace,monospace;font-size:.72rem;margin-left:auto;padding:.1rem .5rem;border-radius:999px;}
+.opt.correct .tag.tag-correct{display:inline-block;background:var(--good);color:#062;}
+.opt.incorrect .tag.tag-incorrect{display:inline-block;background:var(--bad);color:#400;}
+.multi-note{font-size:.8rem;color:var(--ink-dim);margin-bottom:.6rem;font-style:italic;}
+footer{position:sticky;bottom:env(safe-area-inset-bottom,0px);padding-top:1.5rem;}
+#submit{
+  width:100%;padding:1rem;border:none;border-radius:12px;
+  background:var(--accent);color:var(--accent-ink);font-family:inherit;
+  font-size:1.05rem;font-weight:600;cursor:pointer;
+}
+#submit:active{transform:translateY(1px);}
+#reset{
+  display:none;width:100%;margin-top:.6rem;padding:.85rem;border-radius:12px;
+  border:1px solid var(--line);background:transparent;color:var(--ink);
+  font-family:inherit;font-size:.95rem;cursor:pointer;
+}
+#reset.show{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">PRACTICE SET · 30 QUESTIONS</div>
+  <h1>AWS Certified Developer — Associate</h1>
+  <p class="sub">Answer every question, then submit to see your score and the correct answers explained inline.</p>
+</header>
+
+<div id="score-band">
+  <div><div class="num" id="score-num">0 / 30</div><div class="lbl">correct answers</div></div>
+  <div class="lbl" id="score-pct">0%</div>
+</div>
+
+<div id="quiz"></div>
+
+<footer>
+  <button id="submit">Submit exam</button>
+  <button id="reset">Try again</button>
+</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+{q:"An e-commerce application writes log files into Amazon S3 and also reads these log files in parallel on a near real-time basis. Which BEST describes S3's behavior when a process replaces an existing object and immediately tries to read it?",
+ o:["Until the change is fully propagated, Amazon S3 might return the previous data","Amazon S3 always returns the latest version of the object","Until the change is fully propagated, Amazon S3 might return the new data","Until the change is fully propagated, Amazon S3 does not return any data"],c:1},
+{q:"A Lambda function in VPC mode must share result files and a log file with other Lambda functions, AWS services, and on-premises resources, appending each new log entry to the same shared file. What should the developer use?",
+ o:["Create an Amazon EFS file system, mount it in Lambda, and store/append the files there","Create a Multi-Attach EBS volume and attach it to all Lambda functions","Store the files in the /tmp local directory","Store the files in the /opt storage directory"],c:0},
+{q:"An AWS CodeBuild build fails and the developer needs to quickly troubleshoot which commands or settings in the BuildSpec file are causing the issue. What should they do?",
+ o:["SSH into the CodeBuild Docker container","Freeze the CodeBuild during its next execution","Run AWS CodeBuild locally using the CodeBuild Agent","Enable detailed monitoring"],c:2},
+{q:"A company needs Lambda test events created once and editable by any IAM user in a developer group. Which solution meets this?",
+ o:["Store test events in S3 as JSON objects and allow bucket access to all IAM users","Configure the event sharing settings to make the test events shareable","Store test events in DynamoDB and allow access via IAM roles","Configure the event sharing settings to make the test events private"],c:1},
+{q:"Users of an API Gateway-fronted microservices app report receiving 501 error codes. Which service will you use to troubleshoot what is failing?",
+ o:["Use API Gateway service","Use CloudWatch service","Use CloudTrail service","Use X-Ray service"],c:1},
+{q:"A developer updates Lambda code (invoked via an alias behind API Gateway) and wants other developers to test the new version with zero impact to customers. What is the LEAST operational overhead solution?",
+ o:["Create a new Lambda version, create a new API Gateway stage integrated with the new version, and test via that stage","Update the alias to a weighted alias, route 10% of traffic to the new version on the existing stage","Deploy a second filtering Lambda that routes test requests to the new version and others to the old version","Create a new version and a whole new API Gateway API integrated with the new version"],c:0},
+{q:"A developer creates a new CloudWatch Logs metric filter to count exceptions, but no results are returned. Why?",
+ o:["A CloudWatch interface VPC endpoint is required for filtering logs in the VPC","CloudWatch Logs only publishes metric data for events that happen after the filter is created","The log group must first be streamed to Amazon OpenSearch Service before filtering works","Metric data points can be filtered only after being exported to S3"],c:1},
+{q:"A developer shuts down an EC2 instance that seemed unneeded, but another instance of the same type automatically launches in the account. What explains this?",
+ o:["It was part of a Network Load Balancer and was automatically started","It was part of an Application Load Balancer and was automatically started","It was part of an Auto Scaling Group, which relaunched a similar instance","The user lacked root permissions required to terminate the instance"],c:2},
+{q:"You need 10 strongly consistent reads per second of 4 KB each from a DynamoDB table. How many Read Capacity Units (RCUs) are needed?",
+ o:["5","40","10","20"],c:2},
+{q:"Over a BGP-based AWS VPN connection, a developer can reach an EC2 instance in subnet A but not one in subnet B of the same VPC. Which logs help verify whether traffic is reaching subnet B?",
+ o:["VPN logs","BGP logs","VPC Flow Logs","AWS CloudTrail logs"],c:2},
+{q:"Which of the following are correct about Amazon RDS Multi-AZ? (Select two)",
+ o:["A Multi-AZ standby instance can be used to serve read requests for scalability","RDS patches the standby first, promotes it to primary, then patches the old primary (now standby)","Amazon RDS automatically fails over to the standby if the primary fails for any reason","Updates to your DB instance are asynchronously replicated to the standby to keep both in sync","For automated backups, I/O activity is suspended on the primary since backups aren't taken from standby"],
+ c:[1,2], multi:true},
+{q:"An Auto Scaling group has desired capacity 3 and maximum capacity 3, scaling on 60% CPU, and is currently at 80% CPU utilization. What happens?",
+ o:["Desired capacity goes to 4 and maximum capacity goes to 4","Desired capacity goes to 4 while maximum capacity stays at 3","The system triggers CloudWatch alarms to AWS support","The system keeps running as is"],c:3},
+{q:"A Lambda function in the default VPC cannot connect to an RDS database sitting in the private subnet of a different VPC (VPC-A). How should the developer solve this?",
+ o:["Modify the RDS security group to allow traffic from all ports from the VPC CIDR block","Redeploy the Lambda function in the same subnet as the RDS instance and allow traffic from it","Create a security group for the Lambda function and add a rule in the RDS security group to allow traffic from it","Create an IAM role with RDS access permissions and attach it to the Lambda function"],c:2},
+{q:"A CodePipeline triggered by EventBridge failed after its source was changed from CodeCommit to S3. Which service helps find the user who made the change?",
+ o:["AWS X-Ray","Amazon CloudWatch","AWS CloudTrail","Amazon Inspector"],c:2},
+{q:"A Lambda function should notify via SNS when a file larger than 50 MB is uploaded to S3. It works via CLI testing, but a 3,000 MB upload with an S3 event notification does not launch the function. What is a possible reason?",
+ o:["S3 event notifications don't activate for files larger than 1,000 MB","The resource-based policy for the Lambda function lacks permission to be invoked by S3","Lambda functions cannot be invoked directly from an S3 event","The S3 bucket needs to be made public"],c:1},
+{q:"An Elastic Beanstalk environment needs at least 4 of its 5 EC2 instances available during deployment or performance degrades, and it currently uses the all-at-once policy. What is the MOST cost-effective fix?",
+ o:["Change the Auto Scaling group to six desired instances","Change the deployment policy to traffic splitting with a 1 hour evaluation time","Change the deployment policy to rolling with additional batch, batch size of 1","Change the deployment policy to rolling with a batch size of 2"],c:2},
+{q:"SQS message processing fails when a user orders a product whose ID has since been deleted, breaking the application code. What should you recommend?",
+ o:["Use a dead-letter queue to handle message processing failures","Use a temporary queue to handle message processing failures","Use short polling to handle message processing failures","Use long polling to handle message processing failures"],c:0},
+{q:"An Elastic Beanstalk ASG doesn't replace an EC2 instance even after the load balancer marks it unhealthy. What configuration is needed?",
+ o:["The ping path field of the load balancer is configured incorrectly","Health checks only covered instance health, not the application failure that occurred","ASG doesn't auto-replace ELB-marked unhealthy instances; they must be replaced manually","The health check type of the Auto Scaling group must be changed from EC2 to ELB"],c:3},
+{q:"An EC2 Auto Scaling group must launch both Spot and On-Demand Amazon Linux instances, each with the CodeDeploy agent auto-installed. What is the most operationally efficient configuration?",
+ o:["Use launch configurations and add a shell script in the console to install the agent","Configure AWS RAM to schedule automatic agent installs","Use launch templates with a User data script that installs the agent on startup","Use AWS Systems Manager to install and update the agent automatically"],c:2},
+{q:"Each image uploaded to S3 needs a thumbnail (via Lambda) AND an email notification. What should the developer configure?",
+ o:["An SNS topic as the S3 event destination; subscribe the Lambda function and an email address to it","An SNS topic as the S3 event destination, subscribed by Lambda, plus an SQS queue subscribed to the SNS topic with an email subscription on the queue","An SQS queue as the S3 event destination, subscribed by Lambda, with an email subscription on the queue","Send S3 events to EventBridge with separate rules invoking Lambda and sending to an SQS queue with an email subscription"],c:0},
+{q:"An Elastic Beanstalk batch-processing app's performance drops during peak traffic, and memory usage isn't shown on the console. How should the developer gather more data?",
+ o:["Configure the CloudWatch agent to push logs to CloudWatch Logs over port 443","Configure the Elastic Beanstalk .ebextensions directory to track memory usage","Configure the CloudWatch agent to track the memory usage of the instances","Configure a CloudWatch dashboard to track memory usage of the instances"],c:2},
+{q:"A developer needs to automate deployment, scaling, and management of a Ruby application without managing the underlying infrastructure. Which service fits best?",
+ o:["AWS CodeDeploy","AWS CloudFormation","AWS OpsWorks","AWS Elastic Beanstalk"],c:3},
+{q:"An API Gateway-based REST API must authenticate requests by comparing an HTTP header client ID and user ID against a DynamoDB table. What should you recommend?",
+ o:["Authorize using Amazon Cognito referencing the DynamoDB authentication table","Set up an API Gateway Model requiring the credentials, granting it DynamoDB access","Update integration requests to require the credentials, granting API Gateway DynamoDB access","Develop a Lambda authorizer that references the authentication data in DynamoDB"],c:3},
+{q:"A custom app on on-premises Linux servers is accessed via API Gateway with X-Ray tracing enabled on the test stage. How can a developer enable X-Ray tracing on the on-premises servers with the LEAST configuration?",
+ o:["Install and run the X-Ray SDK on the servers to capture and relay data","Install and run the X-Ray daemon on the servers to capture and relay data","Capture requests on-premises and use a Lambda function with PutTraceSegments","Capture requests on-premises and use a Lambda function with PutTelemetryRecords"],c:1},
+{q:"A mobile app's API Gateway-based APIs need a new release rolled out safely and transparently to a limited number of users. What is the SIMPLEST solution?",
+ o:["Create a new API and split traffic to it with a Route 53 weighted routing policy","Validate the new version and promote it during the lowest-traffic window","Implement a CloudWatch alarm to trigger rollback on high HTTP 500 rates","Use the canary release deployment option in API Gateway with canarySettings"],c:3},
+{q:"A developer wants to retrieve multiple specific items from DynamoDB in a single API call with minimum impact on the database. Which API call meets this?",
+ o:["BatchGetItem","GetItem","Scan","Query"],c:0},
+{q:"A developer is adding functionality for EC2 instances to write objects to an S3 bucket. Which policy must be modified to allow this?",
+ o:["The session policy applied to the EC2 instance role session","The IAM policy attached to the EC2 instance profile role","The AWS KMS key policy attached to the EC2 instance profile role","The Amazon VPC endpoint policy"],c:1},
+{q:"A load balancer continues routing traffic to a crashed EC2 instance across 3 AZs, causing intermittent issues. What should the team do to minimize this?",
+ o:["Enable SSL","Enable Multi-AZ deployments","Enable Health Checks","All of the above"],c:2},
+{q:"A company caches session info in a DynamoDB table and wants an automated way to delete old items. What is the simplest way?",
+ o:["Write a script that deletes old records and schedule it as a cron job on EC2","Add an expiration-time attribute and enable the Time To Live feature on it","Create a new table each day to hold session data and delete the previous day's table","Add an attribute named ItemExpiration with the expiration time"],c:1},
+{q:"A year-long contract calls for moving a steady-traffic three-tier web app to AWS with no downtime and a cost-optimal, reliable setup. Which option should you choose?",
+ o:["Amazon EC2 Spot Instances","Amazon EC2 Reserved Instances","On-premises EC2 instance","Amazon EC2 On-Demand Instances"],c:1},
+];
+
+const quizEl = document.getElementById('quiz');
+let html = '';
+QUESTIONS.forEach((item, qi) => {
+  html += `<div class="q" data-qi="${qi}">
+    <div class="qhead"><span class="idx">${String(qi+1).padStart(2,'0')}</span><span class="prompt">${item.q}</span></div>`;
+  if(item.multi) html += `<div class="multi-note">Select all that apply.</div>`;
+  html += `<div class="opts">`;
+  item.o.forEach((opt, oi) => {
+    const type = item.multi ? 'checkbox' : 'radio';
+    html += `<label class="opt" data-oi="${oi}">
+      <input type="${type}" name="q${qi}" value="${oi}">
+      <span>${opt}</span>
+      <span class="tag tag-correct">Correct</span>
+      <span class="tag tag-incorrect">Your answer</span>
+    </label>`;
+  });
+  html += `</div></div>`;
+});
+quizEl.innerHTML = html;
+
+document.getElementById('submit').addEventListener('click', () => {
+  let score = 0;
+  QUESTIONS.forEach((item, qi) => {
+    const qDiv = quizEl.querySelector(`.q[data-qi="${qi}"]`);
+    const inputs = qDiv.querySelectorAll('input');
+    const correctSet = item.multi ? new Set(item.c) : new Set([item.c]);
+    let selected = [];
+    inputs.forEach(inp => { if(inp.checked) selected.push(Number(inp.value)); inp.disabled = true; });
+    const selSet = new Set(selected);
+    const isRight = selSet.size === correctSet.size && [...selSet].every(v => correctSet.has(v));
+    if(isRight) score++;
+    inputs.forEach((inp, oi) => {
+      const label = inp.closest('.opt');
+      if(correctSet.has(oi)) label.classList.add('correct');
+      else if(selSet.has(oi)) label.classList.add('incorrect');
+    });
+  });
+  const band = document.getElementById('score-band');
+  band.classList.add('show');
+  document.getElementById('score-num').textContent = `${score} / ${QUESTIONS.length}`;
+  document.getElementById('score-pct').textContent = Math.round(score/QUESTIONS.length*100) + '%';
+  document.getElementById('submit').style.display = 'none';
+  document.getElementById('reset').classList.add('show');
+  band.scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('reset').addEventListener('click', () => location.reload());
+</script>
+</body>
+</html>
